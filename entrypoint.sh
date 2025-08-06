@@ -5,6 +5,8 @@ echo "$SSH_USER:$SSH_PASSWORD" | chpasswd
 usermod -aG sudo $SSH_USER
 echo "$SSH_USER ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/init
 echo 'PermitRootLogin no' > /etc/ssh/sshd_config.d/root.conf
+echo $DOMAIN > /etc/hostname
+
 cat > /etc/supervisord.conf << EOF
 [supervisord]
 nodaemon=true
