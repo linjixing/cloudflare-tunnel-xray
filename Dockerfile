@@ -5,14 +5,12 @@ LABEL org.opencontainers.image.source https://github.com/linjixing/cloudflare-tu
 COPY entrypoint.sh /
 
 RUN export DEBIAN_FRONTEND=noninteractive; \
-    chmod +x /entrypoint.sh; \
+    apt-get update; \
+    apt-get install -y vim tzdata ca-certificates curl wget git unzip sudo net-tools iputils-ping iproute2 supervisor --no-install-recommends; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*; \
     echo "alias ll='ls -la'" >> /etc/bash.bashrc; \
     echo "alias reboot='sudo kill -SIGTERM 1'" >> /etc/bash.bashrc; \
-    apt update; \
-    apt install -y software-properties-common openssh-server sudo cron tzdata curl wget unzip vim \
-    telnet net-tools iputils-ping iproute2 supervisor --no-install-recommends; \
-    apt clean; \
-    rm -rf /var/lib/apt/lists/*; \
     ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
     echo "Asia/Shanghai" > /etc/timezone; \
     echo "set fileencodings=utf-8,gbk,utf-16le,cp1252,iso-8859-15,ucs-bom" >> /etc/vim/vimrc; \
@@ -23,11 +21,9 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
     wget https://github.com/XTLS/Xray-core/releases/download/v25.7.26/Xray-linux-64.zip; \
     unzip -o Xray-linux-64.zip -d /usr/local/bin; \
     rm -rf Xray-linux-64.zip; \
-    curl -Lo /usr/local/bin/cloudflared https://github.com/cloudflare/cloudflared/releases/download/2025.7.0/cloudflared-linux-amd64; \
-    chmod +x /usr/local/bin/cloudflared; \
-    mkdir /var/run/sshd
-
-EXPOSE 22
+    curl -Lo /usr/bin/cloudflared https://github.com/cloudflare/cloudflared/releases/download/2025.7.0/cloudflared-linux-amd64; \
+    chmod +x /usr/bin/cloudflared; \
+    chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 

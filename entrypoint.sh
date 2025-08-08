@@ -1,19 +1,13 @@
 #!/usr/bin/env sh
 
-useradd -m -s /bin/bash $SSH_USER
-echo "$SSH_USER:$SSH_PASSWORD" | chpasswd
-usermod -aG sudo $SSH_USER
-echo "$SSH_USER ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/init
-echo 'PermitRootLogin no' > /etc/ssh/sshd_config.d/root.conf
-echo $DOMAIN > /etc/hostname
-
 cat > /etc/supervisord.conf << EOF
 [supervisord]
+[supervisord]
 nodaemon=true
-logfile=/tmp/supervisord.log
-logfile_maxbytes=5MB
-logfile_backups=3
-loglevel=info
+logfile=/dev/null
+
+[include]
+files=/etc/supervisor/conf.d/*.conf
 
 [unix_http_server]
 file=/var/run/supervisor.sock
@@ -24,35 +18,20 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 [supervisorctl]
 serverurl=unix:///var/run/supervisor.sock
 
-[program:sshd]
-command=/usr/sbin/sshd -D
-autostart=true
-autorestart=true
-
-[program:cron]
-command=/usr/sbin/cron -f
-autostart=true
-autorestart=true
-
 [program:ttyd]
-environment=HOME="/home/$SSH_USER",USER="$SSH_USER",LOGNAME="$SSH_USER"
-command=ttyd -c $SSH_USER:$SSH_PASSWORD -W bash
-directory=/home/$SSH_USER
+command=ttyd -c root:password -W bash
 autostart=true
 autorestart=true
-user=$SSH_USER
 
 [program:xray]
 command=xray -c /etc/xray.json
 autostart=true
 autorestart=true
-user=$SSH_USER
 
-[program:cf]
+[program:cloudflared]
 command=cloudflared tunnel --no-autoupdate --edge-ip-version auto --protocol http2 run --token $TOKEN
 autostart=true
 autorestart=true
-user=$SSH_USER
 EOF
 
 cat > /etc/xray.json << EOF
