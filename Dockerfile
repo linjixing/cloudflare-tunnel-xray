@@ -16,8 +16,8 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
     echo "set fileencodings=utf-8,gbk,utf-16le,cp1252,iso-8859-15,ucs-bom" >> /etc/vim/vimrc; \
     echo "set termencoding=utf-8" >> /etc/vim/vimrc; \
     echo "set encoding=utf-8" >> /etc/vim/vimrc; \
-    wget -O /usr/local/bin/ttyd https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.x86_64; \
-    chmod +x /usr/local/bin/ttyd; \
+    wget -O /usr/bin/ttyd https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.x86_64; \
+    chmod +x /usr/bin/ttyd; \
     wget https://github.com/XTLS/Xray-core/releases/download/v25.7.26/Xray-linux-64.zip; \
     unzip -o Xray-linux-64.zip -d /usr/local/bin; \
     rm -rf Xray-linux-64.zip; \
